@@ -6,17 +6,59 @@
   <title>SimulaFácil - Resultados</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    .secao-consorcio, .secao-financiamento, .secao-aluguel, .secao-resumo { padding: 15px; margin-bottom: 20px; }
+    .container-main { 
+      display: flex; 
+      justify-content: space-between; 
+      gap: 20px; 
+      margin-top: 20px; 
+    }
+    .coluna-esquerda, .coluna-direita { 
+      flex: 1; 
+      max-width: 48%; 
+      padding: 15px; 
+    }
+    .secao-consorcio { 
+      background-color: #e6f3e6; 
+      border: 1px solid #b3d9b3; 
+      padding: 15px; 
+      margin-bottom: 20px; 
+      border-radius: 5px; 
+    }
+    .secao-financiamento { 
+      background-color: #e6f3ff; 
+      border: 1px solid #b3d9ff; 
+      padding: 15px; 
+      margin-bottom: 20px; 
+      border-radius: 5px; 
+    }
+    .secao-aluguel { 
+      background-color: #fff3e6; 
+      border: 1px solid #ffd9b3; 
+      padding: 15px; 
+      margin-bottom: 20px; 
+      border-radius: 5px; 
+    }
+    .secao-resumo { 
+      background-color: #f8f9fa; 
+      border: 1px solid #dee2e6; 
+      padding: 15px; 
+      margin-bottom: 20px; 
+      border-radius: 5px; 
+    }
+    .indicadores { 
+      background-color: #f8f9fa; 
+      border: 1px solid #dee2e6; 
+      padding: 15px; 
+      border-radius: 5px; 
+      margin-bottom: 20px; 
+    }
     h1 { font-size: 1.8rem; }
     h3 { font-size: 1.4rem; }
     h4 { font-size: 1.2rem; }
+    h5 { font-size: 1.1rem; }
     p { font-size: 1rem; margin-bottom: 10px; }
     .btn-resultado { padding: 8px 16px; font-size: 0.9rem; }
     .btn-sm-custom { padding: 6px 12px; font-size: 0.85rem; }
-    .secao-consorcio { background-color: #e6f3e6; border: 1px solid #b3d9b3; }
-    .secao-financiamento { background-color: #e6f3ff; border: 1px solid #b3d9ff; }
-    .secao-aluguel { background-color: #fff3e6; border: 1px solid #ffd9b3; }
-    .secao-resumo { background-color: #f8f9fa; border: 1px solid #dee2e6; }
   </style>
 </head>
 <body>
@@ -24,37 +66,45 @@
     <button class="btn btn-secondary btn-sm-custom mb-3" onclick="voltar()">Voltar</button>
     <h1 class="text-center mb-4">Resultados da Simulação</h1>
 
-    <div class="secao-resumo rounded mb-4">
-      <h4>Resumo dos Dados Inseridos</h4>
-      <div id="resumo-dados"></div>
-    </div>
-
-    <div class="mb-4">
+    <div class="indicadores">
       <h4>Indicadores Econômicos</h4>
-      <p><strong>Taxa CDI Atual:</strong> <span id="cdi-atual">Carregando...</span></p>
+      <p><strong>Taxa CDI Atual (a.a.):</strong> <span id="cdi-atual">Carregando...</span></p>
       <p><strong>Taxa TR Atual (Mensal):</strong> <span id="tr-atual">Carregando...</span> | <strong>Acumulado 12 Meses:</strong> <span id="tr-acumulado">Carregando...</span></p>
       <p><strong>IPCA Atual (Mensal):</strong> <span id="ipca-atual">Carregando...</span> | <strong>Acumulado 12 Meses:</strong> <span id="ipca-acumulado">Carregando...</span></p>
       <p><strong>INCC Atual (Mensal):</strong> <span id="incc-atual">Carregando...</span> | <strong>Acumulado 12 Meses:</strong> <span id="incc-acumulado">Carregando...</span></p>
     </div>
 
-    <div id="resultados">
-      <div id="resultado-consorcio" class="secao-consorcio rounded" style="display: none;">
-        <h3>Consórcio</h3>
-        <p><strong>Custo Total Pago:</strong> <span id="custo-total-consorcio">R$ 0,00</span></p>
-        <p><strong>Valor da Parcela Ajustada:</strong> <span id="parcela-ajustada-consorcio">R$ 0,00</span></p>
-        <p><strong>Valor Corrigido:</strong> <span id="valor-corrigido-consorcio">R$ 0,00</span></p>
+    <div class="container-main">
+      <!-- Coluna Esquerda: Resumo dos Dados -->
+      <div class="coluna-esquerda">
+        <div class="secao-resumo">
+          <h4>Resumo dos Dados Inseridos</h4>
+          <div id="resumo-dados"></div>
+        </div>
       </div>
-      <div id="resultado-financiamento" class="secao-financiamento rounded" style="display: none;">
-        <h3>Financiamento</h3>
-        <p><strong>Custo Total:</strong> <span id="custo-total-financiamento">R$ 0,00</span></p>
-        <p><strong>Parcela Mensal Média:</strong> <span id="parcela-financiamento">R$ 0,00</span></p>
-        <p><strong>Total de Juros Pagos:</strong> <span id="juros-financiamento">R$ 0,00</span></p>
-      </div>
-      <div id="resultado-aluguel" class="secao-aluguel rounded" style="display: none;">
-        <h3>Aluguel + Investimento</h3>
-        <p><strong>Total Pago em Aluguel:</strong> <span id="total-aluguel">R$ 0,00</span></p>
-        <p><strong>Montante Final Investido:</strong> <span id="montante-investido">R$ 0,00</span></p>
-        <p><strong>Lucro Líquido:</strong> <span id="lucro-liquido">R$ 0,00</span></p>
+
+      <!-- Coluna Direita: Resultados -->
+      <div class="coluna-direita">
+        <div id="resultados">
+          <div id="resultado-consorcio" class="secao-consorcio" style="display: none;">
+            <h3>Consórcio</h3>
+            <p><strong>Custo Total Pago:</strong> <span id="custo-total-consorcio">R$ 0,00</span></p>
+            <p><strong>Valor da Parcela Ajustada:</strong> <span id="parcela-ajustada-consorcio">R$ 0,00</span></p>
+            <p><strong>Valor Corrigido:</strong> <span id="valor-corrigido-consorcio">R$ 0,00</span></p>
+          </div>
+          <div id="resultado-financiamento" class="secao-financiamento" style="display: none;">
+            <h3>Financiamento</h3>
+            <p><strong>Custo Total:</strong> <span id="custo-total-financiamento">R$ 0,00</span></p>
+            <p><strong>Parcela Mensal Média:</strong> <span id="parcela-financiamento">R$ 0,00</span></p>
+            <p><strong>Total de Juros Pagos:</strong> <span id="juros-financiamento">R$ 0,00</span></p>
+          </div>
+          <div id="resultado-aluguel" class="secao-aluguel" style="display: none;">
+            <h3>Aluguel + Investimento</h3>
+            <p><strong>Total Pago em Aluguel:</strong> <span id="total-aluguel">R$ 0,00</span></p>
+            <p><strong>Montante Final Investido:</strong> <span id="montante-investido">R$ 0,00</span></p>
+            <p><strong>Lucro Líquido:</strong> <span id="lucro-liquido">R$ 0,00</span></p>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -64,28 +114,30 @@
       <button class="btn btn-secondary btn-sm-custom" onclick="voltar()">Voltar</button>
     </div>
   </div>
+
   <script src="script.js"></script>
   <script>
     window.onload = function() {
-      console.log("Iniciando carregamento de resultado.html..."); // Depuração
+      console.log("Iniciando carregamento de resultado.html...");
       let urlParams = new URLSearchParams(window.location.search);
       let simulacaoAtual = JSON.parse(localStorage.getItem("simulacaoAtual") || "{}");
       if (!urlParams.get("simulacao") || !simulacaoAtual.resultado) {
-        console.log("Nenhuma simulação encontrada no localStorage."); // Depuração
+        console.log("Nenhuma simulação encontrada no localStorage.");
         alert("Nenhuma simulação disponível!");
         window.location.href = "home.html";
         return;
       }
 
-      console.log("Dados da simulação carregados:", simulacaoAtual); // Depuração
+      console.log("Dados da simulação carregados:", simulacaoAtual);
       let resultado = simulacaoAtual.resultado;
       let detalhes = simulacaoAtual.detalhes;
       let consorcio = resultado.consorcioAtivo;
       let financiamento = resultado.financiamentoAtivo;
       let aluguelInvestimento = resultado.aluguelInvestimentoAtivo;
 
-      // Preencher indicadores econômicos
+      // Indicadores Econômicos
       document.getElementById("cdi-atual").textContent = resultado.cdiAtual ? `${resultado.cdiAtual}%` : "Indisponível";
+      console.log("CDI exibido em resultado.html:", resultado.cdiAtual);
       document.getElementById("tr-atual").textContent = resultado.trAtual ? `${resultado.trAtual}%` : "Indisponível";
       document.getElementById("ipca-atual").textContent = resultado.ipcaAtual ? `${resultado.ipcaAtual}%` : "Indisponível";
       document.getElementById("incc-atual").textContent = resultado.inccAtual ? `${resultado.inccAtual}%` : "Indisponível";
@@ -93,7 +145,7 @@
       document.getElementById("ipca-acumulado").textContent = resultado.ipcaAcumulado ? `${resultado.ipcaAcumulado}%` : "Indisponível";
       document.getElementById("incc-acumulado").textContent = resultado.inccAcumulado ? `${resultado.inccAcumulado}%` : "Indisponível";
 
-      // Preencher resultados
+      // Resultados (lado direito)
       if (consorcio && resultado.consorcio) {
         document.getElementById("resultado-consorcio").style.display = "block";
         document.getElementById("custo-total-consorcio").textContent = "R$ " + parseFloat(resultado.consorcio.custoTotalConsorcio).toLocaleString("pt-BR", { minimumFractionDigits: 2 });
@@ -115,52 +167,58 @@
         document.getElementById("lucro-liquido").textContent = "R$ " + parseFloat(resultado.aluguelInvestimento.lucroLiquido).toLocaleString("pt-BR", { minimumFractionDigits: 2 });
       }
 
-      // Preencher resumo dos dados inseridos
+      // Resumo dos Dados (lado esquerdo)
       let resumoDados = document.getElementById("resumo-dados");
       let resumoHTML = "";
 
       if (consorcio && detalhes.consorcio) {
         resumoHTML += `
-          <h5>Consórcio</h5>
-          <p><strong>Valor da Carta:</strong> R$ ${detalhes.consorcio.valorCarta.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
-          <p><strong>Prazo Total:</strong> ${detalhes.consorcio.prazoTotal} meses</p>
-          <p><strong>Prazo Restante:</strong> ${detalhes.consorcio.prazoRestante || 0} meses</p>
-          <p><strong>Valor da Parcela:</strong> R$ ${detalhes.consorcio.valorParcela.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
-          <p><strong>Parcela Reduzida:</strong> ${detalhes.consorcio.parcelaReduzida ? "Sim (" + detalhes.consorcio.reducao + "%)" : "Não"}</p>
-          <p><strong>Taxa de Administração:</strong> ${detalhes.consorcio.taxaAdmin.toFixed(2)}%</p>
-          <p><strong>Fundo de Reserva:</strong> ${detalhes.consorcio.fundoReserva.toFixed(2)}%</p>
-          <p><strong>Taxa de Adesão:</strong> R$ ${detalhes.consorcio.taxaAdesao.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
-          <p><strong>Seguro de Vida:</strong> R$ ${detalhes.consorcio.seguroVida.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
-          <p><strong>Correção:</strong> ${detalhes.consorcio.correcao}</p>
+          <div class="secao-consorcio">
+            <h5>Consórcio</h5>
+            <p><strong>Valor da Carta:</strong> R$ ${detalhes.consorcio.valorCarta.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
+            <p><strong>Prazo Total:</strong> ${detalhes.consorcio.prazoTotal} meses</p>
+            <p><strong>Prazo Restante:</strong> ${detalhes.consorcio.prazoRestante || 0} meses</p>
+            <p><strong>Valor da Parcela:</strong> R$ ${detalhes.consorcio.valorParcela.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
+            <p><strong>Parcela Reduzida:</strong> ${detalhes.consorcio.parcelaReduzida ? "Sim (" + detalhes.consorcio.reducao + "%)" : "Não"}</p>
+            <p><strong>Taxa de Administração:</strong> ${detalhes.consorcio.taxaAdmin.toFixed(2)}%</p>
+            <p><strong>Fundo de Reserva:</strong> ${detalhes.consorcio.fundoReserva.toFixed(2)}%</p>
+            <p><strong>Taxa de Adesão:</strong> R$ ${detalhes.consorcio.taxaAdesao.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
+            <p><strong>Seguro de Vida:</strong> R$ ${detalhes.consorcio.seguroVida.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
+            <p><strong>Correção:</strong> ${detalhes.consorcio.correcao}</p>
+          </div>
         `;
       }
 
       if (financiamento && detalhes.financiamento) {
         resumoHTML += `
-          <h5>Financiamento</h5>
-          <p><strong>Valor do Financiamento:</strong> R$ ${detalhes.financiamento.valorFin.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
-          <p><strong>Taxa de Juros (anual):</strong> ${detalhes.financiamento.jurosFin.toFixed(2)}%</p>
-          <p><strong>Prazo:</strong> ${detalhes.financiamento.prazoFin} meses</p>
-          <p><strong>Entrada:</strong> R$ ${detalhes.financiamento.entradaFin.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
-          <p><strong>Taxas Extras:</strong> R$ ${detalhes.financiamento.taxasExtrasFin.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
+          <div class="secao-financiamento">
+            <h5>Financiamento</h5>
+            <p><strong>Valor do Financiamento:</strong> R$ ${detalhes.financiamento.valorFin.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
+            <p><strong>Taxa de Juros (anual):</strong> ${detalhes.financiamento.jurosFin.toFixed(2)}%</p>
+            <p><strong>Prazo:</strong> ${detalhes.financiamento.prazoFin} meses</p>
+            <p><strong>Entrada:</strong> R$ ${detalhes.financiamento.entradaFin.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
+            <p><strong>Taxas Extras:</strong> R$ ${detalhes.financiamento.taxasExtrasFin.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
+          </div>
         `;
       }
 
       if (aluguelInvestimento && detalhes.aluguelInvestimento) {
         resumoHTML += `
-          <h5>Aluguel + Investimento</h5>
-          <p><strong>Valor do Aluguel:</strong> R$ ${detalhes.aluguelInvestimento.aluguel.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
-          <p><strong>Valor de Entrada:</strong> R$ ${detalhes.aluguelInvestimento.entradaAluguel.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
-          <p><strong>Prazo:</strong> ${detalhes.aluguelInvestimento.prazoAluguel} meses</p>
-          <p><strong>Aportes Mensais:</strong> R$ ${detalhes.aluguelInvestimento.aportes.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
-          <p><strong>CDB (% do CDI):</strong> ${detalhes.aluguelInvestimento.percentCdi ? detalhes.aluguelInvestimento.percentCdi.toFixed(2) + "%" : "Não selecionado"}</p>
-          <p><strong>IPCA+ (% anual):</strong> ${detalhes.aluguelInvestimento.jurosIpca ? detalhes.aluguelInvestimento.jurosIpca.toFixed(2) + "%" : "Não selecionado"}</p>
-          <p><strong>Pré-fixado (% anual):</strong> ${detalhes.aluguelInvestimento.jurosPrefixado ? detalhes.aluguelInvestimento.jurosPrefixado.toFixed(2) + "%" : "Não selecionado"}</p>
+          <div class="secao-aluguel">
+            <h5>Aluguel + Investimento</h5>
+            <p><strong>Valor do Aluguel:</strong> R$ ${detalhes.aluguelInvestimento.aluguel.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
+            <p><strong>Valor de Entrada:</strong> R$ ${detalhes.aluguelInvestimento.entradaAluguel.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
+            <p><strong>Prazo:</strong> ${detalhes.aluguelInvestimento.prazoAluguel} meses</p>
+            <p><strong>Aportes Mensais:</strong> R$ ${detalhes.aluguelInvestimento.aportes.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</p>
+            <p><strong>CDB (% do CDI):</strong> ${detalhes.aluguelInvestimento.percentCdi ? detalhes.aluguelInvestimento.percentCdi.toFixed(2) + "%" : "Não selecionado"}</p>
+            <p><strong>IPCA+ (% anual):</strong> ${detalhes.aluguelInvestimento.jurosIpca ? detalhes.aluguelInvestimento.jurosIpca.toFixed(2) + "%" : "Não selecionado"}</p>
+            <p><strong>Pré-fixado (% anual):</strong> ${detalhes.aluguelInvestimento.jurosPrefixado ? detalhes.aluguelInvestimento.jurosPrefixado.toFixed(2) + "%" : "Não selecionado"}</p>
+          </div>
         `;
       }
 
       resumoDados.innerHTML = resumoHTML || "<p>Nenhum dado inserido para exibir.</p>";
-      console.log("Resumo dos dados inseridos preenchido."); // Depuração
+      console.log("Resumo dos dados inseridos preenchido.");
     };
   </script>
 </body>

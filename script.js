@@ -72,67 +72,99 @@ document.addEventListener("DOMContentLoaded", function() {
   }
 });
 
+// Função auxiliar para obter o último dia do último mês completo
+function getUltimoMesCompleto() {
+  const hoje = new Date("2025-03-14"); // Data fixa conforme instruções
+  const ultimoMes = new Date(hoje);
+  ultimoMes.setMonth(hoje.getMonth() - 1);
+  ultimoMes.setDate(0); // Último dia do mês anterior
+  return ultimoMes.toISOString().split("T")[0];
+}
+
 async function fetchTRData(prazo) {
-  console.log("Buscando dados da TR para prazo:", prazo); // Depuração
+  console.log("Buscando dados da TR para prazo:", prazo);
   try {
-    const hoje = new Date();
-    const dataFim = hoje.toISOString().split("T")[0];
-    const dataInicio = new Date(hoje.setMonth(hoje.getMonth() - Math.max(prazo, 12))).toISOString().split("T")[0];
+    const dataFim = getUltimoMesCompleto(); // Ex.: 2025-02-28
+    const dataInicio = new Date(new Date(dataFim).setMonth(new Date(dataFim).getMonth() - Math.max(prazo, 12))).toISOString().split("T")[0];
     const url = `https://api.bcb.gov.br/dados/serie/bcdata.sgs.226/dados?formato=json&dataInicial=${dataInicio}&dataFinal=${dataFim}`;
+    console.log("URL da requisição TR:", url);
     const response = await fetch(url);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Erro HTTP: ${response.status} - ${errorText}`);
+    }
     const data = await response.json();
+    if (!Array.isArray(data)) throw new Error("Resposta não é um array");
+    console.log("Dados TR retornados:", data);
     return data.map(item => parseFloat(item.valor) / 100);
   } catch (error) {
     console.error("Erro ao buscar TR:", error);
-    return Array(prazo).fill(0.0002);
+    return Array(prazo).fill(0.0002); // Fallback: 0,02% ao mês
   }
 }
 
 async function fetchCDIData() {
-  console.log("Iniciando busca do CDI..."); // Depuração
+  console.log("Iniciando busca do CDI...");
   try {
     const url = `https://api.bcb.gov.br/dados/serie/bcdata.sgs.12/dados/ultimos/1?formato=json`;
+    console.log("URL da requisição CDI:", url);
     const response = await fetch(url);
+    if (!response.ok) throw new Error(`Erro HTTP: ${response.status}`);
     const data = await response.json();
-    const cdi = parseFloat(data[0].valor);
-    console.log("Valor do CDI retornado pela API:", cdi); // Log principal
-    return cdi; // Retorna diretamente o valor em % (ex.: 13.15)
+    if (!Array.isArray(data) || data.length === 0) throw new Error("Resposta inválida");
+    const cdiDiario = parseFloat(data[0].valor) / 100; // Taxa diária em decimal (ex.: 0.00049037)
+    console.log("CDI diário retornado pela API (%):", cdiDiario * 100);
+    const cdiAnualizado = (Math.pow(1 + cdiDiario, 252) - 1) * 100; // Annualização para 252 dias úteis
+    console.log("CDI anualizado calculado (% a.a.):", cdiAnualizado);
+    return cdiAnualizado; // Retorna em % anual (ex.: 13.15)
   } catch (error) {
     console.error("Erro ao buscar CDI:", error);
     console.log("Usando fallback do CDI: 13.15");
-    return 13.15; // Fallback corrigido para 13,15% (março 2025)
+    return 13.15; // Fallback
   }
 }
 
 async function fetchIPCAData(prazo) {
-  console.log("Buscando dados do IPCA para prazo:", prazo); // Depuração
+  console.log("Buscando dados do IPCA para prazo:", prazo);
   try {
-    const hoje = new Date();
-    const dataFim = hoje.toISOString().split("T")[0];
-    const dataInicio = new Date(hoje.setMonth(hoje.getMonth() - Math.max(prazo, 12))).toISOString().split("T")[0];
+    const dataFim = getUltimoMesCompleto(); // Ex.: 2025-02-28
+    const dataInicio = new Date(new Date(dataFim).setMonth(new Date(dataFim).getMonth() - Math.max(prazo, 12))).toISOString().split("T")[0];
     const url = `https://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados?formato=json&dataInicial=${dataInicio}&dataFinal=${dataFim}`;
+    console.log("URL da requisição IPCA:", url);
     const response = await fetch(url);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Erro HTTP: ${response.status} - ${errorText}`);
+    }
     const data = await response.json();
+    if (!Array.isArray(data)) throw new Error("Resposta não é um array");
+    console.log("Dados IPCA retornados:", data);
     return data.map(item => parseFloat(item.valor) / 100);
   } catch (error) {
     console.error("Erro ao buscar IPCA:", error);
-    return Array(prazo).fill(0.005); // Fallback: 0,5%
+    return Array(prazo).fill(0.005); // Fallback: 0,5% ao mês
   }
 }
 
 async function fetchINCCData(prazo) {
-  console.log("Buscando dados do INCC para prazo:", prazo); // Depuração
+  console.log("Buscando dados do INCC para prazo:", prazo);
   try {
-    const hoje = new Date();
-    const dataFim = hoje.toISOString().split("T")[0];
-    const dataInicio = new Date(hoje.setMonth(hoje.getMonth() - Math.max(prazo, 12))).toISOString().split("T")[0];
+    const dataFim = getUltimoMesCompleto(); // Ex.: 2025-02-28
+    const dataInicio = new Date(new Date(dataFim).setMonth(new Date(dataFim).getMonth() - Math.max(prazo, 12))).toISOString().split("T")[0];
     const url = `https://api.bcb.gov.br/dados/serie/bcdata.sgs.192/dados?formato=json&dataInicial=${dataInicio}&dataFinal=${dataFim}`;
+    console.log("URL da requisição INCC:", url);
     const response = await fetch(url);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Erro HTTP: ${response.status} - ${errorText}`);
+    }
     const data = await response.json();
+    if (!Array.isArray(data)) throw new Error("Resposta não é um array");
+    console.log("Dados INCC retornados:", data);
     return data.map(item => parseFloat(item.valor) / 100);
   } catch (error) {
     console.error("Erro ao buscar INCC:", error);
-    return Array(prazo).fill(0.004); // Fallback: 0,4%
+    return Array(prazo).fill(0.004); // Fallback: 0,4% ao mês
   }
 }
 
@@ -141,7 +173,10 @@ function calcularAcumulado(valores) {
 }
 
 async function simular() {
-  console.log("Iniciando simulação..."); // Depuração
+  console.log("Iniciando simulação...");
+  localStorage.removeItem("simulacaoAtual");
+  console.log("localStorage limpo antes da simulação.");
+
   let urlParams = new URLSearchParams(window.location.search);
   let consorcio = urlParams.get("consorcio") === "true";
   let financiamento = urlParams.get("financiamento") === "true";
@@ -149,8 +184,9 @@ async function simular() {
 
   let resultado = {};
   let detalhes = {};
-  let cdiAtual = await fetchCDIData(); // Valor em % (ex.: 13.15)
-  console.log("CDI atual obtido:", cdiAtual); // Depuração após chamada
+  let cdiAtual = await fetchCDIData(); // Valor em % anual (ex.: 13.15)
+  console.log("CDI atual obtido (anualizado):", cdiAtual);
+
   let trData = financiamento ? await fetchTRData(parseInt(document.getElementById("prazo-fin")?.value || 0)) : await fetchTRData(12);
   let ipcaData = consorcio || aluguelInvestimento ? await fetchIPCAData(parseInt(document.getElementById("prazo-total")?.value || document.getElementById("prazo-aluguel")?.value || 0)) : await fetchIPCAData(12);
   let inccData = consorcio ? await fetchINCCData(parseInt(document.getElementById("prazo-total")?.value || 0)) : await fetchINCCData(12);
@@ -262,7 +298,8 @@ async function simular() {
     let prazoAluguel = parseInt(document.getElementById("prazo-aluguel").value) || 0;
     let aportes = parseFloat(document.getElementById("aportes-aluguel").value) || 0;
     let percentCdi = document.getElementById("cdb").checked ? parseFloat(document.getElementById("juros-cdb").value) / 100 : 0;
-    let jurosCdb = percentCdi * (cdiAtual / 100) / 12; // CDI em % para decimal, depois mensal
+    let jurosCdb = percentCdi * (cdiAtual / 100) / 12; // CDI anual (% a.a.) para decimal mensal
+    console.log("Calculando jurosCdb: percentCdi =", percentCdi, "cdiAtual =", cdiAtual, "jurosCdb mensal =", jurosCdb);
     let jurosIpca = document.getElementById("ipca").checked ? (parseFloat(document.getElementById("juros-ipca").value) || 0) / 100 / 12 : 0;
     let jurosPrefixado = document.getElementById("prefixado").checked ? parseFloat(document.getElementById("juros-prefixado").value) / 100 / 12 : 0;
 
@@ -287,13 +324,14 @@ async function simular() {
       entradaAluguel, 
       prazoAluguel, 
       aportes, 
-      percentCdi: percentCdi * 100, // % do CDI
-      jurosIpca: jurosIpca * 12 * 100, // Convertido de volta para % anual
-      jurosPrefixado: jurosPrefixado * 12 * 100 // Convertido de volta para % anual
+      percentCdi: percentCdi * 100, 
+      jurosIpca: jurosIpca * 12 * 100, 
+      jurosPrefixado: jurosPrefixado * 12 * 100 
     };
   }
 
-  resultado.cdiAtual = cdiAtual.toFixed(2); // Exibe como % (ex.: 13.15)
+  resultado.cdiAtual = cdiAtual.toFixed(2); // CDI anual em % (ex.: "13.15")
+  console.log("CDI armazenado em resultado.cdiAtual antes de salvar:", resultado.cdiAtual);
   resultado.trAtual = (trData[trData.length - 1] * 100).toFixed(4);
   resultado.ipcaAtual = (ipcaData[ipcaData.length - 1] * 100).toFixed(2);
   resultado.inccAtual = (inccData[inccData.length - 1] * 100).toFixed(2);
@@ -304,24 +342,25 @@ async function simular() {
   resultado.financiamentoAtivo = financiamento;
   resultado.aluguelInvestimentoAtivo = aluguelInvestimento;
 
-  console.log("Simulação concluída, salvando no localStorage..."); // Depuração
+  console.log("Simulação concluída, salvando no localStorage...");
   localStorage.setItem("simulacaoAtual", JSON.stringify({ resultado, detalhes }));
+  console.log("Dados salvos no localStorage:", JSON.parse(localStorage.getItem("simulacaoAtual")));
   window.location.href = "resultado.html?simulacao=atual";
 }
 
 if (window.location.pathname.includes("resultado.html")) {
   window.onload = function() {
-    console.log("Carregando página de resultados..."); // Depuração
+    console.log("Carregando página de resultados...");
     let urlParams = new URLSearchParams(window.location.search);
     let simulacaoAtual = JSON.parse(localStorage.getItem("simulacaoAtual") || "{}");
     if (!urlParams.get("simulacao") || !simulacaoAtual.resultado) {
-      console.log("Nenhuma simulação disponível no localStorage."); // Depuração
+      console.log("Nenhuma simulação disponível no localStorage.");
       alert("Nenhuma simulação disponível!");
       window.location.href = "home.html";
       return;
     }
 
-    console.log("Simulação carregada do localStorage:", simulacaoAtual); // Depuração
+    console.log("Simulação carregada do localStorage:", simulacaoAtual);
     let resultado = simulacaoAtual.resultado;
     let detalhes = simulacaoAtual.detalhes;
     let consorcio = resultado.consorcioAtivo;
@@ -329,6 +368,7 @@ if (window.location.pathname.includes("resultado.html")) {
     let aluguelInvestimento = resultado.aluguelInvestimentoAtivo;
 
     document.getElementById("cdi-atual").textContent = resultado.cdiAtual ? `${resultado.cdiAtual}%` : "Indisponível";
+    console.log("CDI exibido em resultado.html:", resultado.cdiAtual);
     document.getElementById("tr-atual").textContent = resultado.trAtual ? `${resultado.trAtual}%` : "Indisponível";
     document.getElementById("ipca-atual").textContent = resultado.ipcaAtual ? `${resultado.ipcaAtual}%` : "Indisponível";
     document.getElementById("incc-atual").textContent = resultado.inccAtual ? `${resultado.inccAtual}%` : "Indisponível";
