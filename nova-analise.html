@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SimulaFácil - Nova Análise</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <style>
+    .secao-consorcio, .secao-financiamento, .secao-aluguel { padding: 15px; margin-bottom: 20px; }
+    .form-label { font-size: 1rem; }
+    .form-control, .form-select { font-size: 1rem; padding: 10px; }
+    .btn-analise { padding: 8px 16px; font-size: 0.9rem; margin-top: 10px; }
+    .btn-sm-custom { padding: 6px 12px; font-size: 0.85rem; }
+    .tooltip-mobile { font-size: 0.9rem; }
+    .secao-consorcio { background-color: #e6f3e6; border: 1px solid #b3d9b3; border-radius: 5px; }
+    .secao-financiamento { background-color: #e6f3ff; border: 1px solid #b3d9ff; border-radius: 5px; }
+    .secao-aluguel { background-color: #fff3e6; border: 1px solid #ffd9b3; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <button class="btn btn-secondary btn-sm-custom mb-3" onclick="voltarEscolha()">Voltar</button>
+    <h1 class="text-center mb-4">Nova Análise</h1>
+    <form id="form-analise">
+      <div id="secao-consorcio" class="secao-consorcio" style="display: none;">
+        <h3>Consórcio</h3>
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <label class="form-label">Número do Grupo <span class="text-primary" data-bs-toggle="tooltip" title="Identificador único do grupo">?</span></label>
+            <input type="number" class="form-control" id="grupo">
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label">Valor da Carta (R$) <span class="text-primary" data-bs-toggle="tooltip" title="Valor total do bem">?</span></label>
+            <input type="number" class="form-control" id="valor-carta">
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label">Prazo Total (meses) <span class="text-primary" data-bs-toggle="tooltip" title="Duração total">?</span></label>
+            <input type="number" class="form-control" id="prazo-total">
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label">Prazo Restante (meses) <span class="text-primary" data-bs-toggle="tooltip" title="Meses restantes">?</span></label>
+            <input type="number" class="form-control" id="prazo-restante">
+          </div>
+          <div class="col-12">
+            <label class="form-label">Valor da Parcela (R$) <span class="text-primary" data-bs-toggle="tooltip" title="Parcela padrão">?</span></label>
+            <input type="number" class="form-control" id="valor-parcela">
+            <div class="form-check mt-2">
+              <input class="form-check-input" type="checkbox" id="parcela-reduzida">
+              <label class="form-check-label">Parcela Reduzida até Contemplação <span class="text-primary" data-bs-toggle="tooltip" title="Reduz até contemplação">?</span></label>
+              <select class="form-select mt-2" id="reducao" disabled>
+                <option value="25">25%</option>
+                <option value="50">50%</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-12 col-md-4">
+            <label class="form-label">Taxa de Administração (%) <span class="text-primary" data-bs-toggle="tooltip" title="Taxa total da administradora">?</span></label>
+            <input type="number" class="form-control" id="taxa-admin" step="0.01">
+          </div>
+          <div class="col-12 col-md-4">
+            <label class="form-label">Fundo de Reserva (%) <span class="text-primary" data-bs-toggle="tooltip" title="Reserva para imprevistos">?</span></label>
+            <input type="number" class="form-control" id="fundo-reserva" step="0.01">
+          </div>
+          <div class="col-12 col-md-4">
+            <label class="form-label">Taxa de Adesão (R$) <span class="text-primary" data-bs-toggle="tooltip" title="Custo inicial">?</span></label>
+            <input type="number" class="form-control" id="taxa-adesao">
+          </div>
+          <div class="col-12">
+            <label class="form-label">Seguro de Vida (R$) <span class="text-primary" data-bs-toggle="tooltip" title="Custo do seguro">?</span></label>
+            <input type="number" class="form-control" id="seguro-vida">
+          </div>
+          <div class="col-12">
+            <label class="form-label">Correção <span class="text-primary" data-bs-toggle="tooltip" title="Índice de ajuste">?</span></label>
+            <select class="form-select" id="correcao">
+              <option value="INCC">INCC</option>
+              <option value="IPCA">IPCA</option>
+              <option value="fixo">Fixo</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div id="secao-financiamento" class="secao-financiamento" style="display: none;">
+        <h3>Financiamento</h3>
+        <div class="row g-3">
+          <div class="col-12 col-md-4">
+            <label class="form-label">Valor do Financiamento (R$) <span class="text-primary" data-bs-toggle="tooltip" title="Valor financiado">?</span></label>
+            <input type="number" class="form-control" id="valor-fin">
+          </div>
+          <div class="col-12 col-md-4">
+            <label class="form-label">Taxa de Juros (%) <span class="text-primary" data-bs-toggle="tooltip" title="Juros anual">?</span></label>
+            <input type="number" class="form-control" id="juros-fin" step="0.01">
+          </div>
+          <div class="col-12 col-md-4">
+            <label class="form-label">Prazo (meses) <span class="text-primary" data-bs-toggle="tooltip" title="Duração">?</span></label>
+            <input type="number" class="form-control" id="prazo-fin">
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label">Entrada (R$) <span class="text-primary" data-bs-toggle="tooltip" title="Valor inicial">?</span></label>
+            <input type="number" class="form-control" id="entrada-fin">
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label">Taxas Extras (R$) <span class="text-primary" data-bs-toggle="tooltip" title="Custos adicionais">?</span></label>
+            <input type="number" class="form-control" id="taxas-extras-fin">
+          </div>
+        </div>
+      </div>
+
+      <div id="secao-aluguel" class="secao-aluguel" style="display: none;">
+        <h3>Aluguel + Investimento</h3>
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <label class="form-label">Valor do Aluguel (R$) <span class="text-primary" data-bs-toggle="tooltip" title="Custo mensal">?</span></label>
+            <input type="number" class="form-control" id="aluguel">
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label">Valor de Entrada (R$) <span class="text-primary" data-bs-toggle="tooltip" title="Montante inicial">?</span></label>
+            <input type="number" class="form-control" id="entrada-aluguel">
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label">Prazo (meses) <span class="text-primary" data-bs-toggle="tooltip" title="Período">?</span></label>
+            <input type="number" class="form-control" id="prazo-aluguel">
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label">Aportes Mensais (R$) <span class="text-primary" data-bs-toggle="tooltip" title="Valor investido mensalmente">?</span></label>
+            <input type="number" class="form-control" id="aportes-aluguel">
+          </div>
+          <div class="col-12">
+            <label class="form-label">Tipo de Investimento <span class="text-primary" data-bs-toggle="tooltip" title="CDB em % do CDI; IPCA+ e Pré-fixado em % anual">?</span></label>
+            <div class="row g-3">
+              <div class="col-12 col-md-4">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="cdb">
+                  <label class="form-check-label">CDB</label>
+                </div>
+                <input type="number" class="form-control mt-2" id="juros-cdb" placeholder="Taxa (% do CDI)" step="0.01" disabled>
+              </div>
+              <div class="col-12 col-md-4">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="ipca">
+                  <label class="form-check-label">IPCA+</label>
+                </div>
+                <input type="number" class="form-control mt-2" id="juros-ipca" placeholder="Taxa (% anual)" step="0.01" disabled>
+              </div>
+              <div class="col-12 col-md-4">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="prefixado">
+                  <label class="form-check-label">Pré-fixado</label>
+                </div>
+                <input type="number" class="form-control mt-2" id="juros-prefixado" placeholder="Taxa (% anual)" step="0.01" disabled>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex flex-column gap-2">
+        <button type="button" class="btn btn-primary btn-analise" onclick="simular()">Simular</button>
+        <button type="button" class="btn btn-secondary btn-sm-custom" onclick="voltarEscolha()">Voltar</button>
+      </div>
+    </form>
+  </div>
+  <script src="script.js"></script>
+  <script>
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl, { customClass: 'tooltip-mobile' });
+    });
+  </script>
+</body>
+</html>

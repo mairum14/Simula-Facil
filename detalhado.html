@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SimulaFácil - Resultados Detalhados</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    h1 { font-size: 1.8rem; }
+    h3 { font-size: 1.4rem; }
+    .table { font-size: 0.9rem; }
+    .btn-detalhado { padding: 12px; font-size: 1.1rem; }
+    .secao-consorcio { background-color: #e6f3e6; padding: 15px; margin-bottom: 20px; border: 1px solid #b3d9b3; border-radius: 5px; }
+    .secao-financiamento { background-color: #e6f3ff; padding: 15px; margin-bottom: 20px; border: 1px solid #b3d9ff; border-radius: 5px; }
+    .secao-aluguel { background-color: #fff3e6; padding: 15px; margin-bottom: 20px; border: 1px solid #ffd9b3; border-radius: 5px; }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <button class="btn btn-secondary btn-sm mb-3" onclick="window.location.href='resultado.html?simulacao=atual'">Voltar</button>
+    <h1 class="text-center mb-4">Resultados Detalhados</h1>
+    <div id="detalhes"></div>
+    <button class="btn btn-secondary btn-sm mt-3" onclick="window.location.href='resultado.html?simulacao=atual'">Voltar</button>
+  </div>
+  <script src="script.js"></script>
+  <script>
+    window.onload = function() {
+      let simulacaoAtual = JSON.parse(localStorage.getItem("simulacaoAtual") || "{}");
+      if (!simulacaoAtual.detalhes) {
+        alert("Nenhum detalhe disponível!");
+        window.location.href = "home.html";
+        return;
+      }
+
+      let detalhes = simulacaoAtual.detalhes;
+      let container = document.getElementById("detalhes");
+      let resultado = simulacaoAtual.resultado;
+
+      if (resultado.consorcioAtivo && detalhes.consorcio) {
+        let table = `<div class="secao-consorcio"><h3>Consórcio</h3><table class="table table-striped"><thead><tr><th>Mês</th><th>Parcela (R$)</th><th>Acumulado (R$)</th></tr></thead><tbody>`;
+        detalhes.consorcio.parcelas.forEach(p => {
+          table += `<tr><td>${p.mes}</td><td>${p.parcela.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td><td>${p.acumulado.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td></tr>`;
+        });
+        table += "</tbody></table></div>";
+        container.innerHTML += table;
+      }
+
+      if (resultado.financiamentoAtivo && detalhes.financiamento) {
+        let table = `<div class="secao-financiamento"><h3>Financiamento</h3><table class="table table-striped"><thead><tr><th>Mês</th><th>Parcela (R$)</th><th>Juros (R$)</th><th>Amortização (R$)</th><th>Saldo Devedor (R$)</th></tr></thead><tbody>`;
+        detalhes.financiamento.parcelas.forEach(p => {
+          table += `<tr><td>${p.mes}</td><td>${p.parcela.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td><td>${p.juros.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td><td>${p.amortizacao.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td><td>${p.saldo.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td></tr>`;
+        });
+        table += "</tbody></table></div>";
+        container.innerHTML += table;
+      }
+
+      if (resultado.aluguelInvestimentoAtivo && detalhes.aluguelInvestimento) {
+        let table = `<div class="secao-aluguel"><h3>Aluguel + Investimento</h3><table class="table table-striped"><thead><tr><th>Mês</th><th>Aluguel (R$)</th><th>Aporte (R$)</th><th>Montante (R$)</th></tr></thead><tbody>`;
+        detalhes.aluguelInvestimento.parcelas.forEach(p => {
+          table += `<tr><td>${p.mes}</td><td>${p.aluguel.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td><td>${p.aporte.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td><td>${p.montante.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}</td></tr>`;
+        });
+        table += "</tbody></table></div>";
+        container.innerHTML += table;
+      }
+    };
+  </script>
+</body>
+</html>
